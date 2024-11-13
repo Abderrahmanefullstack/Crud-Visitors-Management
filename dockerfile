@@ -10,6 +10,10 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Copier le projet Laravel dans le conteneur
 COPY . /var/www/html
 
+# Copier le script wait-for-it dans le conteneur
+COPY wait-for-it.sh /usr/local/bin/wait-for-it.sh
+RUN chmod +x /usr/local/bin/wait-for-it.sh
+
 # Installer les dépendances Laravel via Composer
 RUN cd /var/www/html && composer install
 
