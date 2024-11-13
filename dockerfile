@@ -23,6 +23,10 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Copier le code source du projet dans le répertoire du conteneur
 COPY . /var/www/html
 
+# Copier le script wait-for-it.sh et lui donner les permissions nécessaires
+COPY wait-for-it.sh /usr/local/bin/wait-for-it.sh
+RUN chmod +x /usr/local/bin/wait-for-it.sh
+
 # Changer les permissions du dossier de projet (nécessaire pour que Laravel fonctionne correctement)
 RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
@@ -36,5 +40,5 @@ RUN composer install --no-interaction --prefer-dist
 # Exposer le port 80 pour accéder à l'application web
 EXPOSE 80
 
-# Lancer le serveur Laravel
-CMD ["php", "artisan", "serve", "--host=0.0.0.0"]
+# Lancer le serveur Laravel, mais d'abord attendre que la base de données soit prête
+CMD /bin/bash -c "/usr/local/bin/wait-for-it.sh db:3306 -- php artisan serve --host=0.0.0.0"
