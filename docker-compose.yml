@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: crud_visiteurs_app
+    ports:
+      - "8000:80" # Redirige le port 80 du conteneur vers le port 8000 de votre machine locale
+    volumes:
+      - .:/var/www/html # Lie votre code source Laravel au conteneur
+    depends_on:
+      - db # Indique que l'application dépend du service MySQL
+    networks:
+      - crud_visiteurs_network
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=db # Nom du service MySQL, qui agit comme un DNS interne dans Docker Compose
+      - DB_PORT=3306
+      - DB_DATABASE=crud_visiteurs
+      - DB_USERNAME=root # Utilisateur MySQL
+      - DB_PASSWORD=rootpassword # Mot de passe MySQL
+
+  db:
+    image: mysql:5.7
+    container_name: crud_visiteurs_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword # Définition du mot de passe pour root
+      MYSQL_DATABASE: crud_visiteurs # La base de données déjà existante
+      MYSQL_USER: user # Utilisateur pour l'application
+      MYSQL_PASSWORD: userpassword # Mot de passe pour l'utilisateur
+    ports:
+      - "3306:3306" # Redirige le port MySQL de votre conteneur vers votre machine locale
+    networks:
+      - crud_visiteurs_network
+    volumes:
+      - mysql_data:/var/lib/mysql # Persistance des données de la base de données
+
+networks:
+  crud_visiteurs_network:
+    driver: bridge
+
+volumes:
+  mysql_data: # Persister les données de MySQL
