@@ -5,7 +5,7 @@ services:
     build: .
     container_name: crud_visiteurs_app
     ports:
-      - "8000:80" # Redirige le port 80 du conteneur vers le port 8000 de votre machine locale
+      - "8088:80" # Redirige le port 80 du conteneur vers le port 8000 de votre machine locale
     volumes:
       - .:/var/www/html # Lie votre code source Laravel au conteneur
     depends_on:
